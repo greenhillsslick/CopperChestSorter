@@ -554,6 +554,11 @@ public final class CopperChestSorter implements ModInitializer {
                 if (!exactName.isEmpty()) categories.add("@exact:" + exactName);
                 continue;
             }
+            if (token.endsWith("*")) {
+                String family = token.substring(0, token.length() - 1).trim();
+                if (!family.isEmpty()) categories.add("@family:" + family);
+                continue;
+            }
             String key = normalize(token);
             switch (key) {
                 case "wood", "woods", "wooden", "madera" -> categories.add("@wood");
@@ -610,8 +615,21 @@ public final class CopperChestSorter implements ModInitializer {
                     || path.endsWith("_wool_slab") || path.endsWith("_wool_stairs");
             default -> category.startsWith("#") && hasTag(stack, category.substring(1))
                     || category.startsWith("@exact:") && matches(stack, category.substring("@exact:".length()))
-                    || category.startsWith("@item:") && matchesGenericItemType(stack, category.substring("@item:".length()));
+                    || category.startsWith("@item:") && matchesGenericItemType(stack, category.substring("@item:".length()))
+                    || category.startsWith("@family:") && matchesFamily(stack, category.substring("@family:".length()));
         };
+    }
+
+    private static boolean matchesFamily(ItemStack stack, String selector) {
+        if (stack.isEmpty() || selector == null || selector.isBlank()) return false;
+        String family = selector.trim().toLowerCase(java.util.Locale.ROOT);
+        int namespaceSeparator = family.indexOf(':');
+        if (namespaceSeparator >= 0) family = family.substring(namespaceSeparator + 1);
+        String[] familyWords = family.split("[^\\p{L}\\p{N}]+");
+        String[] pathWords = itemPath(stack).toLowerCase(java.util.Locale.ROOT).split("[^\\p{L}\\p{N}]+");
+        String[] displayWords = stack.getHoverName().getString().toLowerCase(java.util.Locale.ROOT)
+                .split("[^\\p{L}\\p{N}]+");
+        return containsWordPhrase(pathWords, familyWords) || containsWordPhrase(displayWords, familyWords);
     }
 
     private static boolean matchesGenericItemType(ItemStack stack, String type) {

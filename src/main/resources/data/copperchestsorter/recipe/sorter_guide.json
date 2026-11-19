@@ -28,7 +28,7 @@
             "text": "VARIOS OBJETOS\n\nSepara los nombres con comas:\n\nCobblestone, Dirt, Oak Log\n\nEl cofre guardará esos tres tipos. Se ignoran mayúsculas, espacios, guiones y guiones bajos. Stone no incluye Redstone: los nombres se comparan completos."
           },
           {
-            "text": "CARTEL: OBJETOS EXACTOS\n\nDeja el cofre sin renombrar y ponle un cartel. Escribe el nombre exacto de un objeto o bloque: Diamond, Diamond Block o Redstone. También admite objetos de mods. Separa varios con comas. Los carteles cercanos que no estén apoyados directamente en ese cofre se ignoran.\n\nAlias de grupo: wood, slabs, fences, wool, sword y axe. (Stone) también significa solo Stone, nunca Stone Hoe."
+            "text": "CARTEL: EXACTO O VARIANTES\n\nDeja el cofre sin renombrar y ponle un cartel. Un nombre normal es exacto: Cobblestone solo es ese bloque. Añade * para incluir variantes: Cobblestone* incluye Cobblestone, Cobblestone Slab, Cobblestone Wall y Mossy Cobblestone. Stone* no incluye Redstone.\n\nUsa paréntesis para indicar exacto: (Cobblestone). También admite objetos de mods. Separa varios con comas. Los carteles que no estén apoyados directamente en ese cofre se ignoran.\n\nAlias de grupo: wood, slabs, fences, wool, sword y axe."
           },
           {
             "text": "PEDIR UN OBJETO\n\nClic derecho con la mano vacía en el Copper Chest Sorter para abrir el menú. Escribe el nombre o ID exacto del objeto/bloque y la cantidad. El golem lo buscará en cofres cercanos y te lo lanzará. Si no hay suficiente, entrega lo disponible, completa la tarea y te informa cuántos faltan."
