@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import es.arenamods.copperchestsorter.network.OpenItemRequestPayload;
 import es.arenamods.copperchestsorter.network.SubmitItemRequestPayload;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -502,19 +503,46 @@ public final class CopperChestSorter implements ModInitializer {
 
     private static List<String> signCategories(ServerLevel level, BlockPos chestPos) {
         List<String> categories = new ArrayList<>();
-        // Signs can attach beside, above, or below either half of a chest; inspect the full 3x3x3 neighborhood.
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                for (int dz = -1; dz <= 1; dz++) {
-                    if (dx == 0 && dy == 0 && dz == 0) continue;
-                    BlockEntity entity = level.getBlockEntity(chestPos.offset(dx, dy, dz));
-                    if (!(entity instanceof SignBlockEntity sign)) continue;
-                    for (Component message : sign.getText(SignTextSlot.FRONT).getMessages(false)) addCategoryTokens(categories, message.getString());
-                    for (Component message : sign.getText(SignTextSlot.BACK).getMessages(false)) addCategoryTokens(categories, message.getString());
-                }
-            }
+        // Only signs directly supported by this chest count. The previous 3x3x3 scan also
+        // claimed diagonal signs attached to nearby blocks, causing unrelated chests to sort.
+        for (Direction direction : Direction.values()) {
+            BlockPos signPos = chestPos.relative(direction);
+            BlockEntity entity = level.getBlockEntity(signPos);
+            if (!(entity instanceof SignBlockEntity sign)
+                    || !isSignAttachedToChest(level.getBlockState(signPos), direction)) continue;
+            for (Component message : sign.getText(SignTextSlot.FRONT).getMessages(false)) addCategoryTokens(categories, message.getString());
+            for (Component message : sign.getText(SignTextSlot.BACK).getMessages(false)) addCategoryTokens(categories, message.getString());
         }
         return categories.stream().distinct().toList();
+    }
+
+    private static boolean isSignAttachedToChest(BlockState signState, Direction chestToSign) {
+        Object facing = propertyValue(signState, "facing");
+        if (facing instanceof Direction signFacing) {
+            // Wall signs face away from the block they are attached to.
+            return signFacing == chestToSign;
+        }
+        if (chestToSign == Direction.UP) {
+            // A standing sign directly on the chest is supported below; hanging signs above it
+            // are supported from above instead and must not claim this chest.
+            return hasProperty(signState, "rotation") && !hasProperty(signState, "attached");
+        }
+        if (chestToSign == Direction.DOWN) {
+            // A hanging sign directly below the chest is attached to its underside.
+            return Boolean.TRUE.equals(propertyValue(signState, "attached"));
+        }
+        return false;
+    }
+
+    private static boolean hasProperty(BlockState state, String name) {
+        return state.getProperties().stream().anyMatch(property -> property.getName().equals(name));
+    }
+
+    private static Object propertyValue(BlockState state, String name) {
+        for (var property : state.getProperties()) {
+            if (property.getName().equals(name)) return state.getValue(property);
+        }
+        return null;
     }
 
     private static void addCategoryTokens(List<String> categories, String line) {
@@ -532,14 +560,16 @@ public final class CopperChestSorter implements ModInitializer {
                 case "slab", "slabs", "losa", "losas" -> categories.add("@slabs");
                 case "fence", "fences", "valla", "vallas" -> categories.add("@fences");
                 case "wool", "wools", "lana", "lanas" -> categories.add("@wool");
+                case "sword", "swords", "espada", "espadas" -> categories.add("@item:sword");
+                case "axe", "axes", "hacha", "hachas" -> categories.add("@item:axe");
                 default -> {
                     if (token.startsWith("#")) {
                         String tagId = token.substring(1);
                         if (!tagId.contains(":")) tagId = "minecraft:" + tagId;
                         categories.add("#" + tagId.toLowerCase(java.util.Locale.ROOT));
                     } else {
-                        // Generic terms such as "sword" match the corresponding tag or whole ID words.
-                        categories.add("@item:" + key);
+                        // Item/block names and IDs written on signs are exact matches by default.
+                        categories.add("@exact:" + token);
                     }
                 }
             }
