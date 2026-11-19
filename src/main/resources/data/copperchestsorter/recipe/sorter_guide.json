@@ -16,7 +16,7 @@
         "generation": 0,
         "pages": [
           {
-            "text": "GUÍA DEL GOLEM ORDENADOR\n\nConstrucción\nColoca un bloque de cobre sin oxidar abajo, una tolva encima y una calabaza tallada arriba. Pon la calabaza a mano. Los tres bloques se consumen al aparecer el golem."
+            "text": "GUÍA DEL GOLEM ORDENADOR\n\nConstrucción\nColoca un bloque de cobre sin oxidar abajo, una tolva encima y una calabaza tallada arriba. Pon la calabaza a mano. Los tres bloques se consumen al aparecer el golem.\n\nTambién puedes craftear un huevo del Copper Chest Sorter con esos tres ingredientes y usarlo."
           },
           {
             "text": "COMPORTAMIENTO\n\nEl golem busca cofres cercanos. Va al cofre de origen y luego al de destino, abre sus tapas y lleva los objetos a su sitio. El destino puede ser un cofre renombrado o un cofre sin renombrar con un cartel de categoría. Los cofres normales sirven como almacén temporal."

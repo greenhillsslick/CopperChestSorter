@@ -1,0 +1,47 @@
+name: Build and attach mod JAR
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out release source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.8.1'
+
+      - name: Build mod
+        run: gradle --no-daemon build
+
+      - name: Select distributable JAR
+        id: jar
+        shell: bash
+        run: |
+          set -euo pipefail
+          jar_path="$(find build/libs -maxdepth 1 -type f -name 'copper-chest-sorter-*.jar' \
+            ! -name '*-sources.jar' ! -name '*-dev.jar' -print -quit)"
+          test -n "$jar_path"
+          echo "path=$jar_path" >> "$GITHUB_OUTPUT"
+          ls -lh "$jar_path"
+
+      - name: Upload JAR to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release upload "${GITHUB_REF_NAME}" "${{ steps.jar.outputs.path }}" --clobber

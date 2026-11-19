@@ -19,8 +19,8 @@ The jar is written to `build/libs/`. A compiled jar is also provided alongside t
 
 ## How to use in-game
 
-1. Put a **copper block** on the bottom, a **hopper** on it, and a **carved pumpkin** on top.
-2. The three ingredients are consumed and a Copper Chest Sorter appears.
+1. The Copper Chest Sorter is active in either of two ways: build it by placing a **copper block** on the bottom, a **hopper** on it, and a **carved pumpkin** on top; or craft a **Copper Chest Sorter spawn egg** shapelessly from one copper block, one hopper, and one carved pumpkin, then use the egg.
+2. In the structure build, the three blocks are consumed and the sorter appears. The crafted egg spawns a sorter directly.
 3. Rename a chest in an anvil (for example, `Cobblestone`). Put it within 12 blocks horizontally and 5 blocks vertically of the sorter.
 4. It removes non-matching items from the named chest into nearby *unnamed* chests, then fetches matching items from nearby unnamed chests. To sort several item types in one chest, separate their displayed names with commas, for example `Cobblestone, Dirt, Oak Log`. Names are matched as complete names/IDs, not suffixes (`Stone` will not match `Redstone`); case, spaces, underscores, and hyphens are ignored. A chest with the vanilla default title (`Chest`, `Trapped Chest`, or their translation key/localized equivalent) is treated as ordinary unnamed storage.
 5. Each successful deposit into a chest plays a Minecraft note-block bell. If there is not enough spare room in other nearby chests to empty unwanted items out of the named chest, sorting pauses. A distinct higher-pitched bell alarm rings immediately and then at most once every 30 seconds until there is room.
