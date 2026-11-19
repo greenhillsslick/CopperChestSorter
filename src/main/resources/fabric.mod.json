@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "copperchestsorter",
+  "version": "${version}",
+  "name": "Copper Chest Sorter",
+  "description": "A special copper golem that sorts nearby chests according to their anvil names.",
+  "authors": ["Arena Mod Project"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "es.arenamods.copperchestsorter.CopperChestSorter"
+    ],
+    "client": [
+      "es.arenamods.copperchestsorter.CopperChestSorterClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
