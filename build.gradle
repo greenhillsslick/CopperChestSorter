@@ -10,9 +10,6 @@ base {
 }
 
 loom {
-    mixin {
-        defaultRefmapName = 'copperchestsorter.refmap.json'
-    }
     mods {
         copperchestsorter {
             sourceSet sourceSets.main
@@ -28,7 +25,6 @@ repositories {
 dependencies {
     minecraft 'com.mojang:minecraft:26.3'
     implementation 'net.fabricmc:fabric-loader:0.19.5'
-    annotationProcessor 'net.fabricmc:sponge-mixin:0.15.4+mixin.0.8.7'
     implementation 'net.fabricmc.fabric-api:fabric-api:0.165.0+26.3'
 }
 

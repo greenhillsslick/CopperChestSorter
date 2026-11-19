@@ -40,7 +40,7 @@ jobs:
         run: |
           excerpt="$(grep -i -E '(^e:|error:|what went wrong|could not|cannot find|cannot access|mixin|caused by:|failure:|build failed|execution failed)' build-output.log | tail -n 30 | tr '\n' ' ' | sed 's/%/%25/g; s/\r/%0D/g')"
           echo "::error title=Gradle failure diagnostic::$excerpt"
-          echo "Gradle failed; the complete output is also attached as an artifact."
+          echo "Gradle failed; matching diagnostics are included in this check's annotations."
 
       - name: Select distributable JAR
         id: jar

@@ -7,9 +7,6 @@
   "authors": ["Arena Mod Project"],
   "license": "MIT",
   "environment": "*",
-  "mixins": [
-    "copperchestsorter.mixins.json"
-  ],
   "entrypoints": {
     "main": [
       "es.arenamods.copperchestsorter.CopperChestSorter"

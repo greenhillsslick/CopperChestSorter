@@ -1,9 +1,12 @@
 package es.arenamods.copperchestsorter;
 
+import es.arenamods.copperchestsorter.client.SignFilterSuggestions;
 import es.arenamods.copperchestsorter.network.OpenItemRequestPayload;
 import es.arenamods.copperchestsorter.network.SubmitItemRequestPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -14,6 +17,13 @@ import net.minecraft.network.chat.Component;
 public final class CopperChestSorterClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+            if (!SignFilterSuggestions.isSignEditScreen(screen)) return;
+            ScreenEvents.afterExtract(screen).register((currentScreen, graphics, mouseX, mouseY, tickProgress) ->
+                    SignFilterSuggestions.render(currentScreen, graphics, scaledWidth, scaledHeight, client.font));
+            ScreenMouseEvents.allowMouseClick(screen).register((currentScreen, event) ->
+                    !SignFilterSuggestions.handleClick(currentScreen, event.x(), event.y(), event.button(), scaledWidth, scaledHeight));
+        });
         ClientPlayNetworking.registerGlobalReceiver(OpenItemRequestPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> context.client().setScreenAndShow(new ItemRequestScreen(payload.entityId()))));
     }

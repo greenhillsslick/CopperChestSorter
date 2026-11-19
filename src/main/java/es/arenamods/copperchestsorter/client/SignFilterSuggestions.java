@@ -75,7 +75,7 @@ public final class SignFilterSuggestions {
         return new Selection(messages, row, token);
     }
 
-    private static boolean isSignEditScreen(Object screen) {
+    public static boolean isSignEditScreen(Object screen) {
         for (Class<?> type = screen.getClass(); type != null; type = type.getSuperclass()) {
             if (type.getSimpleName().equals("SignEditScreen")) return true;
         }
@@ -83,18 +83,20 @@ public final class SignFilterSuggestions {
     }
 
     private static String[] findMessages(Object screen) {
+        Field namedMessages = null;
+        Field messageArray = null;
         Field fallback = null;
         for (Class<?> type = screen.getClass(); type != null; type = type.getSuperclass()) {
             for (Field field : type.getDeclaredFields()) {
                 if (field.getType() != String[].class) continue;
-                if (field.getName().toLowerCase(Locale.ROOT).contains("message")) {
-                    String[] messages = readMessages(screen, field);
-                    if (messages != null) return messages;
-                }
-                if (fallback == null) fallback = field;
+                String name = field.getName().toLowerCase(Locale.ROOT);
+                if (name.equals("messages")) namedMessages = field;
+                else if (name.contains("message")) messageArray = field;
+                else if (fallback == null) fallback = field;
             }
         }
-        return fallback == null ? null : readMessages(screen, fallback);
+        Field selected = namedMessages != null ? namedMessages : messageArray != null ? messageArray : fallback;
+        return selected == null ? null : readMessages(screen, selected);
     }
 
     private static String[] readMessages(Object screen, Field field) {
